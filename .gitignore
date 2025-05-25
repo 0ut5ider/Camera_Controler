@@ -1,0 +1,6 @@
+# Files to ignore
+captures/
+*.jpg
+*.JPG
+*.awr
+*.AWR
