@@ -13,13 +13,13 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 # Record camera 1 launch time
 CAM1_LAUNCH_TIME=$(date +%s.%N)
 echo "Launching camera 1 at $CAM1_LAUNCH_TIME..."
-gphoto2 --port "usb:003,037" --capture-image-and-download --filename "cam1-${TIMESTAMP}-%C" &
+gphoto2 --port "usb:003,057" --capture-image-and-download --filename "cam1-${TIMESTAMP}.%C" &
 PID1=$!
 
 # Record camera 2 launch time
 CAM2_LAUNCH_TIME=$(date +%s.%N)
 echo "Launching camera 2 at $CAM2_LAUNCH_TIME..."
-gphoto2 --port "usb:003,036" --capture-image-and-download --filename "cam2-${TIMESTAMP}-%C" &
+gphoto2 --port "usb:003,056" --capture-image-and-download --filename "cam2-${TIMESTAMP}.%C" &
 PID2=$!
 
 
