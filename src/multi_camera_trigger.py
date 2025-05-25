@@ -120,8 +120,8 @@ def main():
         print("No cameras detected. Exiting.")
         return
 
-    print(camera_infos)
-    print("  ")
+#    print(camera_infos)
+#    print("  ")
 
     initialized_cameras_data = []
     for i, cam_info in enumerate(camera_infos):
