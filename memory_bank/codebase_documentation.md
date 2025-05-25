@@ -23,8 +23,8 @@ The script has a few configuration constants at the top of the file:
     - If `True`, the script will attempt to download the image from each camera immediately after it's captured.
     - If `False` (default), images are captured and left on the camera's memory card. This is generally recommended for achieving the best trigger simultaneity.
 - `DOWNLOAD_PATH_PREFIX` (string):
-    - Specifies the base directory for saving downloaded images. The camera's serial number will be appended to this path to create separate folders for each camera.
-    - Example: If set to `"captures"`, images will be saved in folders like `captures/[serial_number]/`, with filenames including a timestamp and the original camera filename.
+    - Specifies the base directory for saving downloaded images. The camera's serial number is used to create a subdirectory within this path.
+    - Example: If set to `"captures/cam"`, images will be saved in folders like `captures/[serial_number]/`, with filenames including a timestamp and the original camera filename (e.g., `captures/[serial_number]/YYYYMMDD-HHMMSS_IMG_1234.JPG`).
 
 ## Core Functions
 
@@ -34,8 +34,9 @@ The script has a few configuration constants at the top of the file:
 
 ### `initialize_camera(camera_info, context)`
 - Takes camera information (from `list_connected_cameras`) and a `gphoto2` context.
-- Attempts to establish a connection with the camera and initialize it.
-- Extracts the camera's serial number from the camera summary.
+- Takes camera information (from `list_connected_cameras`) and the detected lists (`port_info_list`, `abilities_list`), and a `gphoto2` context.
+- Attempts to establish a connection with the camera and initialize it using the provided lists.
+- Extracts the camera's serial number from the camera configuration.
 - Returns a tuple containing a `gphoto2.Camera` object and the extracted serial number if successful, otherwise `None, None`.
 
 ### `set_camera_time_to_now(camera, camera_id, context)`
@@ -46,13 +47,14 @@ The script has a few configuration constants at the top of the file:
 - This function is executed in a separate thread for each camera.
 - Receives the camera object, a session-specific camera ID, the gphoto2 context, a global timestamp for the capture batch, and the camera's serial number.
 - Sends the capture command to the camera.
-- If `DOWNLOAD_AFTER_CAPTURE` is `True`, it proceeds to download the captured image to a folder named after the `serial_number` within the `DOWNLOAD_PATH_PREFIX`, using the provided `timestamp` in the filename.
+- If `DOWNLOAD_AFTER_CAPTURE` is `True`, it proceeds to download the captured image to a subdirectory named after the camera's serial number within the `DOWNLOAD_PATH_PREFIX`, using the provided `timestamp` in the filename.
 
 ### `main()`
 - The main entry point of the script.
 - Creates a `gphoto2.Context`.
-- Calls `list_connected_cameras` to find cameras.
-- Iterates through detected cameras, calls `initialize_camera` for each, and optionally `set_camera_time_to_now`.
+- Calls `list_connected_cameras` to find cameras and get the necessary lists (`port_info_list`, `abilities_list`).
+- Iterates through detected cameras, calls `initialize_camera` for each (passing the lists), and optionally `set_camera_time_to_now`.
+- Stores the initialized camera objects and their serial numbers.
 - Waits for user input (Enter key) before triggering.
 - Creates and starts a new thread for each initialized camera, targeting the `trigger_and_handle_camera` function.
 - Waits for all threads to complete.
